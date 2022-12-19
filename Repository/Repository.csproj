@@ -11,11 +11,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="NLog.Extensions.Logging" Version="5.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Contracts\Contracts.csproj" />
+    <ProjectReference Include="..\Entities\Entities.csproj" />
   </ItemGroup>
 
 </Project>
