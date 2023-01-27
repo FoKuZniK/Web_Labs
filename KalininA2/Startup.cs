@@ -21,6 +21,8 @@ namespace KalininA2
         {
             services.ConfigureCors();
             services.ConfigureIISIntegration();
+            services.ConfigureSqlContext(Configuration);
+            services.ConfigureRepositoryManager();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.ConfigureLoggerService();
