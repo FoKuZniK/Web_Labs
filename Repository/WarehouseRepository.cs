@@ -19,5 +19,8 @@ namespace Repository
         FindAll(trackChanges)
         .OrderBy(c => c.GoodName)
         .ToList();
+
+        public Warehouse GetWarehouse(Guid warehouseId, bool trackChanges)
+            => FindByCondition(c => c.Id.Equals(warehouseId), trackChanges).SingleOrDefault();
     }
 }

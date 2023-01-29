@@ -9,12 +9,12 @@ namespace KalininA2.Controllers
 {
     [Route("api/warehouses")]
     [ApiController]
-    public class WarehouseController : ControllerBase
+    public class WarehousesController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
-        public WarehouseController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+        public WarehousesController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
         {
             _repository = repository;
             _logger = logger;
@@ -26,6 +26,21 @@ namespace KalininA2.Controllers
             var warehouse = _repository.Warehouse.GetAllWarehouse(trackChanges: false);
             var warehouseDto = _mapper.Map<IEnumerable<WarehouseDto>>(warehouse);
             return Ok(warehouseDto);
+        }
+        [HttpGet("{id}")]
+        public IActionResult GetWarehouse(Guid id)
+        {
+            var warehouse = _repository.Warehouse.GetWarehouse(id, trackChanges: false);
+            if (warehouse == null)
+            {
+                _logger.LogInfo($"Warehouse with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+            else
+            {
+                var warehouseDto = _mapper.Map<WarehouseDto>(warehouse);
+                return Ok(warehouseDto);
+            }
         }
     }
 }

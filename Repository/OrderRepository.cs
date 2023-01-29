@@ -19,5 +19,13 @@ namespace Repository
         FindAll(trackChanges)
         .OrderBy(c => c.Goods)
         .ToList();
+
+        public IEnumerable<Order> GetOrders(Guid warehouseId, bool trackChanges) =>
+        FindByCondition(c => c.WarehouseId.Equals(warehouseId), trackChanges)
+        .OrderBy(c => c.Goods);
+
+        public Order GetOrder(Guid warehouseId, Guid id, bool trackChanges) =>
+            FindByCondition(c => c.WarehouseId.Equals(warehouseId) && c.Id.Equals(id), trackChanges).SingleOrDefault();
+
     }
 }

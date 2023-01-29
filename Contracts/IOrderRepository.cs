@@ -9,6 +9,7 @@ namespace Contracts
 {
     public interface IOrderRepository
     {
-        IEnumerable<Order> GetAllOrder(bool trackChanges);
+        IEnumerable<Order> GetOrders(Guid warehouseId, bool trackChanges);
+        Order GetOrder(Guid warehouseId, Guid id, bool trackChanges);
     }
 }
