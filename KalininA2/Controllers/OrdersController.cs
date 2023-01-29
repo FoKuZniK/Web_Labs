@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -36,7 +37,7 @@ namespace KalininA2.Controllers
 
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetOrderForWarehouse")]
         public IActionResult GetOrderForWarehouse(Guid warehouseId, Guid id)
         {
             var warehouse = _repository.Warehouse.GetWarehouse(warehouseId, trackChanges: false);
@@ -53,6 +54,31 @@ namespace KalininA2.Controllers
             }
             var order = _mapper.Map<OrderDto>(orderDb);
             return Ok(order);
+        }
+        [HttpPost]
+        public IActionResult CreateOrderForWarehouse(Guid warehouseId, [FromBody]
+        OrderForCreationDto order)
+        {
+            if (order == null)
+            {
+                _logger.LogError("OrderForCreationDto object sent from client is null.");
+                return BadRequest("OrderForCreationDto object is null");
+            }
+            var warehouse = _repository.Warehouse.GetWarehouse(warehouseId, trackChanges: false);
+            if (warehouse == null)
+            {
+                _logger.LogInfo($"Warehouse with id: {warehouseId} doesn't exist in the database.");
+                return NotFound();
+            }
+            var orderEntity = _mapper.Map<Order>(order);
+            _repository.Order.CreateOrderForWarehouse(warehouseId, orderEntity);
+            _repository.Save();
+            var orderToReturn = _mapper.Map<OrderDto>(orderEntity);
+            return CreatedAtRoute("GetOrderForWarehouse", new
+            {
+                warehouseId,
+                id = orderToReturn.Id
+            }, orderToReturn);
         }
     }
 }

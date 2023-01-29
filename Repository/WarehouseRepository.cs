@@ -22,5 +22,9 @@ namespace Repository
 
         public Warehouse GetWarehouse(Guid warehouseId, bool trackChanges)
             => FindByCondition(c => c.Id.Equals(warehouseId), trackChanges).SingleOrDefault();
+
+        public void CreateWarehouse(Warehouse warehouse) => Create(warehouse);
+        public IEnumerable<Warehouse> GetByIds(IEnumerable<Guid> ids, bool trackChanges) =>
+        FindByCondition(x => ids.Contains(x.Id), trackChanges).ToList();
     }
 }

@@ -11,5 +11,6 @@ namespace Contracts
     {
         IEnumerable<Order> GetOrders(Guid warehouseId, bool trackChanges);
         Order GetOrder(Guid warehouseId, Guid id, bool trackChanges);
+        void CreateOrderForWarehouse(Guid warehouseId, Order order);
     }
 }

@@ -10,6 +10,8 @@ namespace Contracts
     public interface IWarehouseRepository
     {
         IEnumerable<Warehouse> GetAllWarehouse(bool trackChanges);
+        IEnumerable<Warehouse> GetByIds(IEnumerable<Guid> ids, bool trackChanges);
         Warehouse GetWarehouse(Guid warehouseId, bool trackChanges);
+        void CreateWarehouse(Warehouse warehouse);
     }
 }

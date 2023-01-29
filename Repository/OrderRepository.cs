@@ -26,6 +26,11 @@ namespace Repository
 
         public Order GetOrder(Guid warehouseId, Guid id, bool trackChanges) =>
             FindByCondition(c => c.WarehouseId.Equals(warehouseId) && c.Id.Equals(id), trackChanges).SingleOrDefault();
-
+        
+        public void CreateOrderForWarehouse(Guid warehouseId, Order order)
+        {
+            order.WarehouseId = warehouseId;
+            Create(order);
+        }
     }
 }
