@@ -10,6 +10,8 @@ namespace Contracts
     {
         ICompanyRepository Company { get; }
         IEmployeeRepository Employee { get; }
+        IOrderRepository Order { get; }
+        IWarehouseRepository Warehouse { get; }
         void Save();
     }
 }

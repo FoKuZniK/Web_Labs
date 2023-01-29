@@ -31,8 +31,7 @@ namespace KalininA2
             services.AddAutoMapper(typeof(Startup));
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
-ILoggerManager logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
         {
             if (env.IsDevelopment())
             {
@@ -49,12 +48,23 @@ ILoggerManager logger)
                 ForwardedHeaders = ForwardedHeaders.All
             });
 
+            app.UseHsts();
+
+            app.UseStaticFiles();
+
+            app.UseCors("CorsPolicy");
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+
+            {
+                ForwardedHeaders = ForwardedHeaders.All
+            });
+
             app.UseRouting();
 
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
-
             {
                 endpoints.MapControllers();
             });

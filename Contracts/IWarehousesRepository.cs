@@ -9,5 +9,6 @@ namespace Contracts
 {
     public interface IWarehouseRepository
     {
+        IEnumerable<Warehouse> GetAllWarehouse(bool trackChanges);
     }
 }

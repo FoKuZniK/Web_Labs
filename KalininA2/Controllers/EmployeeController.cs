@@ -1,33 +1,33 @@
 ﻿using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using static System.Collections.Specialized.BitVector32;
 
 namespace KalininA2.Controllers
 {
-    [Route("api/companies")]
+    [Route("api/employees")]
     [ApiController]
-    public class CompaniesController : ControllerBase
+    public class EmployeeController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
-        public CompaniesController(IRepositoryManager repository, ILoggerManager
+        public EmployeeController(IRepositoryManager repository, ILoggerManager
         logger, IMapper mapper)
+
         {
             _repository = repository;
             _logger = logger;
             _mapper = mapper;
         }
         [HttpGet]
-        public IActionResult GetCompanies()
+        public IActionResult GetEmployee()
         {
-            var companies = _repository.Company.GetAllCompanies(trackChanges: false);
-            var companiesDto = _mapper.Map<IEnumerable<CompanyDto>>(companies);           
-            return Ok(companiesDto);
+            var employee = _repository.Employee.GetAllEmployee(trackChanges: false);
+            var employeeDto = _mapper.Map<IEnumerable<EmployeeDto>>(employee);
+            return Ok(employeeDto);
         }
     }
-
 }

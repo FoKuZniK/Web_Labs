@@ -9,5 +9,6 @@ namespace Contracts
 {
     public interface IOrderRepository
     {
+        IEnumerable<Order> GetAllOrder(bool trackChanges);
     }
 }

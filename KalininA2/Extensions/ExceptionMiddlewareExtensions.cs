@@ -15,10 +15,9 @@ namespace KalininA2.Extensions
                 appError.Run(async context =>
                 {
                     context.Response.StatusCode =
-                   (int)HttpStatusCode.InternalServerError;
+                    (int)HttpStatusCode.InternalServerError;
                     context.Response.ContentType = "application/json";                    
-                var contextFeature =
-context.Features.Get<IExceptionHandlerFeature>();
+                    var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                     if (contextFeature != null)
                     {
                         logger.LogError($"Something went wrong: { contextFeature.Error}");

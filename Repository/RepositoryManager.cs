@@ -13,6 +13,9 @@ namespace Repository
         private RepositoryContext _repositoryContext;
         private ICompanyRepository _companyRepository;
         private IEmployeeRepository _employeeRepository;
+        private IOrderRepository _orderRepository;
+        private IWarehouseRepository _warehouseRepository;
+
         public RepositoryManager(RepositoryContext repositoryContext)
         {
             _repositoryContext = repositoryContext;
@@ -36,6 +39,26 @@ namespace Repository
                 return _employeeRepository;
             }
         }
+        public IOrderRepository Order
+        {
+            get
+            {
+                if (_orderRepository == null)
+                    _orderRepository = new OrderRepository(_repositoryContext);
+                return _orderRepository;
+            }
+        }
+
+        public IWarehouseRepository Warehouse
+        {
+            get
+            {
+                if (_warehouseRepository == null)
+                    _warehouseRepository = new WarehouseRepository(_repositoryContext);
+                return _warehouseRepository;
+            }
+        }
+
         public void Save() => _repositoryContext.SaveChanges();
     }
 }

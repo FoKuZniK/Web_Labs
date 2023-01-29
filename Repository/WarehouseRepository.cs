@@ -15,5 +15,9 @@ namespace Repository
         : base(repositoryContext)
         {
         }
+        public IEnumerable<Warehouse> GetAllWarehouse(bool trackChanges) =>
+        FindAll(trackChanges)
+        .OrderBy(c => c.GoodName)
+        .ToList();
     }
 }
