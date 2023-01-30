@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
@@ -31,5 +32,14 @@ namespace Repository
             Delete(warehouse);
 
         }
+        public async Task<IEnumerable<Warehouse>> GetAllWarehouseAsync(bool trackChanges)
+        => await FindAll(trackChanges)
+        .OrderBy(c => c.GoodName)
+        .ToListAsync();
+        public async Task<Warehouse> GetWarehouseAsync(Guid warehouseId, bool trackChanges) =>
+        await FindByCondition(c => c.Id.Equals(warehouseId), trackChanges).SingleOrDefaultAsync();
+        public async Task<IEnumerable<Warehouse>> GetByIdsAsync(IEnumerable<Guid> ids, bool
+        trackChanges) =>
+        await FindByCondition(x => ids.Contains(x.Id), trackChanges).ToListAsync();
     }
 }

@@ -10,12 +10,12 @@ using System;
 namespace KalininA2.Controllers
 {
     [Route("api/warehouses/{warehouseId}/orders")]
-    public class OrdersController : ControllerBase
+    public class OrderController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
-        public OrdersController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+        public OrderController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
         {
             _repository = repository;
             _logger = logger;
@@ -65,6 +65,11 @@ namespace KalininA2.Controllers
                 _logger.LogError("OrderForCreationDto object sent from client is null.");
                 return BadRequest("OrderForCreationDto object is null");
             }
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the OderForWarehouseDto object");
+                return UnprocessableEntity(ModelState);
+            }
             var warehouse = _repository.Warehouse.GetWarehouse(warehouseId, trackChanges: false);
             if (warehouse == null)
             {
@@ -111,6 +116,11 @@ namespace KalininA2.Controllers
                 _logger.LogError("OrderForUpdateDto object sent from client is null.");
                 return BadRequest("OrderForUpdateDto object is null");
             }
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the OrderForUpdateDto object");
+                return UnprocessableEntity(ModelState);
+            }
             var warehouse = _repository.Warehouse.GetWarehouse(warehouseId, trackChanges: false);
             if (warehouse == null)
             {
@@ -152,7 +162,13 @@ namespace KalininA2.Controllers
                 return NotFound();
             }
             var orderToPatch = _mapper.Map<OrderForUpdateDto>(orderEntity);
-            patchDoc.ApplyTo(orderToPatch);
+            patchDoc.ApplyTo(orderToPatch, ModelState);
+            TryValidateModel(orderToPatch);
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the patch document");
+                return UnprocessableEntity(ModelState);
+            }
             _mapper.Map(orderToPatch, orderEntity);
             _repository.Save();
             return NoContent();

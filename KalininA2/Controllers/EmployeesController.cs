@@ -11,14 +11,12 @@ namespace KalininA2.Controllers
 {
     [Route("api/companies/{companyId}/employees")]
     [ApiController]
-    public class EmployeesController : ControllerBase
+    public class EmployeeController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
-        public EmployeesController(IRepositoryManager repository, ILoggerManager
-        logger, IMapper mapper)
-
+        public EmployeeController(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
         {
             _repository = repository;
             _logger = logger;
@@ -33,7 +31,8 @@ namespace KalininA2.Controllers
                 _logger.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
                 return NotFound();
             }
-            var employeesFromDb = _repository.Employee.GetEmployees(companyId, trackChanges: false);
+            var employeesFromDb = _repository.Employee.GetEmployees(companyId,
+            trackChanges: false);
             var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employeesFromDb);
             return Ok(employeesDto);
         }
@@ -47,9 +46,7 @@ namespace KalininA2.Controllers
                 _logger.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
                 return NotFound();
             }
-            var employeeDb = _repository.Employee.GetEmployee(companyId, id,
-           trackChanges:
-            false);
+            var employeeDb = _repository.Employee.GetEmployee(companyId, id, trackChanges: false);
             if (employeeDb == null)
             {
                 _logger.LogInfo($"Employee with id: {id} doesn't exist in the database.");
@@ -57,7 +54,6 @@ namespace KalininA2.Controllers
             }
             var employee = _mapper.Map<EmployeeDto>(employeeDb);
             return Ok(employee);
-
         }
         [HttpPost]
         public IActionResult CreateEmployeeForCompany(Guid companyId, [FromBody]
@@ -67,6 +63,11 @@ namespace KalininA2.Controllers
             {
                 _logger.LogError("EmployeeForCreationDto object sent from client is null.");
                 return BadRequest("EmployeeForCreationDto object is null");
+            }
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the EmployeeForCreationDto object");
+                return UnprocessableEntity(ModelState);
             }
             var company = _repository.Company.GetCompany(companyId, trackChanges: false);
             if (company == null)
@@ -113,6 +114,11 @@ namespace KalininA2.Controllers
                 _logger.LogError("EmployeeForUpdateDto object sent from client is null.");
                 return BadRequest("EmployeeForUpdateDto object is null");
             }
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the EmployeeForUpdateDto object");
+                return UnprocessableEntity(ModelState);
+            }
             var company = _repository.Company.GetCompany(companyId, trackChanges: false);
             if (company == null)
             {
@@ -154,7 +160,13 @@ namespace KalininA2.Controllers
                 return NotFound();
             }
             var employeeToPatch = _mapper.Map<EmployeeForUpdateDto>(employeeEntity);
-            patchDoc.ApplyTo(employeeToPatch);
+            patchDoc.ApplyTo(employeeToPatch, ModelState);
+            TryValidateModel(employeeToPatch);
+            if (!ModelState.IsValid)
+            {
+                _logger.LogError("Invalid model state for the patch document");
+                return UnprocessableEntity(ModelState);
+            }
 
             _mapper.Map(employeeToPatch, employeeEntity);
             _repository.Save();
