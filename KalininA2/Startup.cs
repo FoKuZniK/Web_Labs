@@ -1,5 +1,7 @@
-﻿using KalininA2.Extensions;
+﻿using Contracts;
+using KalininA2.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using NLog;
 
@@ -21,13 +23,28 @@ namespace KalininA2
         {
             services.ConfigureCors();
             services.ConfigureIISIntegration();
+            services.ConfigureSqlContext(Configuration);
+            services.ConfigureRepositoryManager();
             services.AddControllers();
             services.AddEndpointsApiExplorer();
             services.ConfigureLoggerService();
             services.AddSwaggerGen();
+            services.AddAutoMapper(typeof(Startup));
+            services.AddControllers(config =>
+            {
+                config.RespectBrowserAcceptHeader = true;
+                config.ReturnHttpNotAcceptable = true;
+
+            }).AddNewtonsoftJson()
+            .AddXmlDataContractSerializerFormatters()
+            .AddCustomCSVFormatter();
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
         {
             if (env.IsDevelopment())
             {
@@ -35,11 +52,23 @@ namespace KalininA2
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+            app.ConfigureExceptionHandler(logger);
             app.UseHttpsRedirection();
-
             app.UseStaticFiles();
             app.UseCors("CorsPolicy");
             app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.All
+            });
+
+            app.UseHsts();
+
+            app.UseStaticFiles();
+
+            app.UseCors("CorsPolicy");
+
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+
             {
                 ForwardedHeaders = ForwardedHeaders.All
             });
@@ -49,7 +78,6 @@ namespace KalininA2
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
-
             {
                 endpoints.MapControllers();
             });
