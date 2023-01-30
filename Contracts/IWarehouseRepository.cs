@@ -13,5 +13,6 @@ namespace Contracts
         IEnumerable<Warehouse> GetByIds(IEnumerable<Guid> ids, bool trackChanges);
         Warehouse GetWarehouse(Guid warehouseId, bool trackChanges);
         void CreateWarehouse(Warehouse warehouse);
+        void DeleteWarehouse(Warehouse warehouse);
     }
 }

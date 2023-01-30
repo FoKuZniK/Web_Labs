@@ -86,5 +86,38 @@ namespace KalininA2.Controllers
             return CreatedAtRoute("WarehouseCollection", new { ids },
             warehouseCollectionToReturn);
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteWarehouse(Guid id)
+        {
+            var warehouse = _repository.Warehouse.GetWarehouse(id, trackChanges: false);
+            if (warehouse == null)
+            {
+                _logger.LogInfo($"Warehouse with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+            _repository.Warehouse.DeleteWarehouse(warehouse);
+            _repository.Save();
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateWarehouse(Guid id, [FromBody] WarehouseForUpdateDto warehouse)
+        {
+            if (warehouse == null)
+            {
+                _logger.LogError("WarehouseForUpdateDto object sent from client is null.");
+                return BadRequest("WarehouseForUpdateDto object is null");
+            }
+            var warehouseEntity = _repository.Warehouse.GetWarehouse(id, trackChanges: true);
+            if (warehouseEntity == null)
+            {
+                _logger.LogInfo($"Warehouse with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+            _mapper.Map(warehouse, warehouseEntity);
+            _repository.Save();
+            return NoContent();
+        }
     }
 }

@@ -15,5 +15,12 @@ public class MappingProfile : Profile
         CreateMap<EmployeeForCreationDto, Employee>();
         CreateMap<WarehouseForCreationDto, Warehouse>();
         CreateMap<OrderForCreationDto, Order>();
+
+        CreateMap<EmployeeForUpdateDto, Employee>();
+        CreateMap<CompanyForUpdateDto, Company>();
+        CreateMap<EmployeeForUpdateDto, Employee>().ReverseMap();
+        CreateMap<OrderForUpdateDto, Order>();
+        CreateMap<WarehouseForUpdateDto, Warehouse>();
+        CreateMap<OrderForUpdateDto, Order>().ReverseMap();
     }
 }
